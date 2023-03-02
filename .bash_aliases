@@ -93,9 +93,6 @@ alias cdd='cd ~/dev'
 export PATH=${HOME}/chromedrivers:${HOME}/dev/seon-admin-react/bin:${PATH}
 export NODE_OPTIONS="--max_old_space_size=4096"
 
-export JIRA_API_USER=zoltan.major@seon.io
-export JIRA_API_KEY=bhfeOHE3GsouPAzWzTsp35BB
-
 alias cda='cd ~/dev/admin/selenium-tests'
 alias nb='nano ~/.bash_aliases'
 alias cdssc='cd ~/dev/seon-selenium-common/'
