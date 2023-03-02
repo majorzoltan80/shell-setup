@@ -1,0 +1,2 @@
+export JIRA_API_USER=example@example.com
+export JIRA_API_KEY=
