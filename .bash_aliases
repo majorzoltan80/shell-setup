@@ -41,12 +41,11 @@ _seq ()
 stop_vpn () {
   sessions=$(openvpn3 sessions-list | grep Path | awk '{print $2}')
   echo "Sessions: [${sessions}]"
-  if [ "${sessions}"="" ];then
+  if [ "${sessions}" = "" ];then
     echo "No vpn sessions present."
+  else
+    openvpn3 session-manage --session-path ${sessions} --disconnect
   fi
-  
-  openvpn3 session-manage --session-path ${sessions} --disconnect
-  
 }
 
 git_reset_to_base() {
