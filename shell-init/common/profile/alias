@@ -1,3 +1,5 @@
+source ${SCRIPT_DIR}/../scripts/common_functions/git.sh
+
 # Function which adds an alias to the current shell and to
 # the ~/.alias file.
 function add-alias () {
@@ -34,30 +36,11 @@ function _seq ()
     echo "$lower"
 }
 
-git_reset_to_base() {
-    base=$1
-    target=$2
-
-    : "${base:=develop}"
-    echo "base: ${base}"
-    : "${target:=$(git branch --show-current)}"
-    echo target: ${target}
-    echo "git reset $(git merge ${base} ${target})"
-    git reset $(git merge-base ${base} ${target})
-
-}
-
 function reload_terminal_setup_files() {
     echo "Reload .alias file"
     source ~/.alias
     echo "Reload .zprofile"
     source ~/.zprofile
-}
-
-
-function add_current_dir_to_path() {
-    echo "Adding current dir to path: $(pwd)"
-    export PATH=${PATH}:$(pwd)
 }
 
 # alias related commands
@@ -116,4 +99,3 @@ alias l='ls -CF'
 
 # general aliases
 alias h='history'
-alias ap="add_current_dir_to_path"

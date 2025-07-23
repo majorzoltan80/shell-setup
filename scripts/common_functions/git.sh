@@ -1,3 +1,17 @@
+git_reset_to_base() {
+    base=$1
+    target=$2
+
+    : "${base:=develop}"
+    echo "base: ${base}"
+    : "${target:=$(git branch --show-current)}"
+    echo target: ${target}
+    echo "git reset $(git merge ${base} ${target})"
+    git reset $(git merge-base ${base} ${target})
+
+}
+
+
 function standardize_branchname() {
   # Converts the string by
   #  - Removing all non-alphanumeric characters by replacing with dashes
