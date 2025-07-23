@@ -1,12 +1,5 @@
 #!/bin/bash
 
-function get_project() {
-  jira_string=$1
-  pattern='([A-Z]+-[0-9]+)'
-  [[ $jira_string =~ $pattern ]]
-  echo "${BASH_REMATCH[1]}"
-}
-
 function get_ticket_number() {
   # Tries to extract the Jira ticket number from the input string
   # The ticket number will be the first numeric group found in the string, so it sould get the correct ticket number
@@ -21,7 +14,21 @@ function get_ticket_number() {
   echo "${BASH_REMATCH[1]}"
 }
 
-function set_type_and_summary() {
+function get_work_item() {
+  # Tries to extract the work item identifier from the input string
+  # Try to get the
+  jira_string=$1
+  pattern='([A-Z]+-[0-9]+)'
+  [[ $jira_string =~ $pattern ]]
+  work_item="${BASH_REMATCH[1]}"
+  if [ -z "${work_item}" ]; then
+    ticket_number=$(get_ticket_number "${jira_string}")
+    work_item="DAEN-${ticket_number}"
+  fi
+  echo "${work_item}"
+}
+
+function get_jira_work_item() {
   TICKET=$1
   ticket_details=$(curl -s \
   --request GET \
@@ -29,13 +36,21 @@ function set_type_and_summary() {
   --user "${JIRA_API_USER}:${JIRA_API_KEY}" \
   --header 'Accept: application/json')
 
-  error_message=$(echo ${ticket_details} | jq ".errorMessages")
+  echo "${ticket_details}"
+}
 
-  if [ "${error_message}" != "null" ];then
-    echo "Error in Jira API call, stopping. Error message: ${error_message}"
-    exit 100
-  fi
+function get_summary() {
+  TICKET=$1
+  ticket_details=$(get_jira_work_item "${TICKET}")
 
   SUMMARY=$(echo "${ticket_details}" | jq -r .fields.summary)
+  echo "${SUMMARY}"
+}
+
+function get_type() {
+  TICKET=$1
+  ticket_details=$(get_jira_work_item "${TICKET}")
+
   TYPE=$(echo "${ticket_details}" | jq -r .fields.issuetype.name)
+  echo "${TYPE}"
 }

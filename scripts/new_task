@@ -3,8 +3,9 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # importing common functions
-source ${SCRIPT_DIR}/common_functions/command_available
+source ${SCRIPT_DIR}/common_functions/command_available.sh
 source ${SCRIPT_DIR}/common_functions/jira.sh
+source ${SCRIPT_DIR}/common_functions/git.sh
 
 
 function help() {
@@ -50,84 +51,15 @@ function parse_arguments() {
       -d | --develop) BASE_BRANCH="develop"; shift 1;;
       -m | --master ) BASE_BRANCH="master"; shift 1;;
       -p | --prefix ) prefix=$2; shift 2;;
-      -j | --jira ) TICKET=$(get_ticket_number "$2"); shift 2;;
-      -f | --force ) FORCE="TRUE"; shift 1;;
+      -j | --jira ) JIRA=$2; shift 2;;
       -h | --help ) help; exit 0;;
       --) shift; break;;
     esac
   done
 
-  if [ "${FORCE}" = "TRUE" ] && [ -z "${TICKET}" ];then
-    echo "if -f, --force option is given, then jira ticket number (-j, --jira) should be given too."
-    exit 2
-  fi
-
-  TICKET=$(get_ticket_number "$2")
-  PROJECT=$(get_project "$2")
+  WORK_ITEM=$(get_work_item "${JIRA}")
 }
 
-function env_var_set() {
-  if [[ -z `printenv $1` ]]; then
-    echo -e "\033[0;31mYou have to set your \033[1;31m$1\033[0;31m environment variable!\033[0m"
-    exit 1;
-  fi
-}
-
-
-function question() {
-  read -p "$(echo -e "\033[0;32m?\033[0m $1 ")" $2
-}
-
-
-function set_type_and_summary() {
-  ticket_details=$(curl -s \
-  --request GET \
-  --url "https://seonteam.atlassian.net/rest/api/3/issue/${PROJECT}-${TICKET}" \
-  --user "${JIRA_API_USER}:${JIRA_API_KEY}" \
-  --header 'Accept: application/json')
-
-  error_message=$(echo ${ticket_details} | jq ".errorMessages")
-  
-  if [ "${error_message}" != "null" ];then
-    echo "Error in Jira API call, stopping. Error message: ${error_message}"
-    exit 100
-  fi
-
-  SUMMARY=$(echo "${ticket_details}" | jq -r .fields.summary)
-  TYPE=$(echo "${ticket_details}" | jq -r .fields.issuetype.name)
-}
-
-function standardize_branchname() {
-  # Converts the string by
-  #  - Removing all non-alphanumeric characters by replacing with dashes
-  #  - removing multiple dashes to only remain one between each word
-  #  - converting to lowercase
-  #  - if the branchname contains the jira ticket already it will convert the seon substring to uppercased SEON
-  #  - Limit length to 100
-  #  - Will not end with dash 
-  # example: "Task/SeOn-12345_String to 'Convert': small.HIGH " -> "task/SEON-12345-string-to-convert-small-high"
-  
-  input_string=$1
-  # Removing all non-alphanumeric characters by replacing with dashes
-  standardized_branchname=$(echo "${input_string//[^a-zA-Z0-9]/-}")
-  
-  # Remove duplicate dashes
-  standardized_branchname=$(echo ${standardized_branchname} | sed -r "s/-+/-/g")
-
-  # convert to lowercase
-  standardized_branchname=$(echo ${standardized_branchname} | tr '[:upper:]' '[:lower:]')
-
-  # Convert seon to SEON
-  standardized_branchname=$(echo ${standardized_branchname} | sed "s|-seon-|/SEON-|g")
-
-  # Limit length to 100 characters
-  standardized_branchname=$(echo "${standardized_branchname:0:100}")
-  
-  # Remove training dash if present
-  standardized_branchname=$(echo "${standardized_branchname%-}")
-
-  echo "${standardized_branchname}"
-}
 
 parse_arguments "$@"
 
@@ -138,14 +70,8 @@ check_command_available git
 check_command_available curl
 check_command_available jq
 
-
-if [ -z "${TICKET}" ]; then
-  question 'What is your ticket number?' TICKET
-fi
-
-TICKET=$(get_ticket_number "${TICKET}")
-
-set_type_and_summary
+TYPE=$(get_type "${WORK_ITEM}")
+SUMMARY=$(get_summary "${WORK_ITEM}")
 
 case "${TYPE}" in
   "Epic")
@@ -162,31 +88,21 @@ case "${TYPE}" in
     ;;
 esac
 
-if [ ! -z "${prefix}" ];then
+if [ -n "${prefix}" ];then
   echo "prefix parameter is set. Creating with \"${prefix}\" prefix."
   PREFIX=${prefix}
 fi
 
-BRANCH="$PREFIX/SEON-$TICKET-${SUMMARY}"
+BRANCH="$PREFIX/${WORK_ITEM}-${SUMMARY}"
 
 BRANCH=$(standardize_branchname "${BRANCH}")
 
-if [ "${FORCE}" != "TRUE" ];then
-  question "Branch name will be: $(echo -e "\033[2;37m($BRANCH)\033[0m")  You can override with new name:" BRANCH2
-fi
-
-# If branch is overrided, then use that and make sure that the branchname format is proper
-if [[ -n "$BRANCH2" ]];then 
-    BRANCH=$(standardize_branchname "${BRANCH2}")
-    echo "Branch is overriden. New branch name will be: ${BRANCH}"
-fi
-
-if [[ -n "$BASE_BRANCH" ]]; then
+if [[ -n "${BASE_BRANCH}" ]]; then
   echo "Base branch is set, checking out \"${BASE_BRANCH}\" "
-  git checkout $BASE_BRANCH
+  git checkout "${BASE_BRANCH}"
   git pull
 else
   echo "Base branch is not set. Creating from current branch: $(git branch --show-current)"
 fi
 
-git checkout -b $BRANCH
+git checkout -b "${BRANCH}"
