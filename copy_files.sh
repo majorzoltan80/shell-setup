@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+
 operation_system=$(uname -s)
 
 if [ "${operation_system}" = "Darwin" ]; then
@@ -10,6 +12,5 @@ else
   cp ./shell-init/.bash_profile ~/profile
 fi
 
-
-cp -rf ./shell-init/common/profile ~/profile
-cp -rf scripts ~/
+rsync -avu --delete "${SCRIPT_DIR}/shell-init/common/profile" "${HOME}"
+rsync -avu --delete "${SCRIPT_DIR}/scripts" "${HOME}"
