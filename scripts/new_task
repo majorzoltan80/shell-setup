@@ -31,29 +31,26 @@ OPTIONS:
 "
 
 }
-
-
 function parse_arguments() {
-  SHORT_OPTIONS=d,m,p:,j:,f,h
-  LONG_OPTIONS=develop,master,prefix:,jira:,force,help
-  OPTS=$(getopt --alternative --name new_task --options ${SHORT_OPTIONS} --longoptions ${LONG_OPTIONS} -- "$@")
-
-  if (( $? != 0 )); then
-    help
-    exit 1
-  fi
-
-  eval set -- "$OPTS"
-
-  while :
-  do
+  # Long option parsing (portable, supports --option and --option=value)
+  while [[ $# -gt 0 ]]; do
     case "$1" in
-      -d | --develop) BASE_BRANCH="develop"; shift 1;;
-      -m | --master ) BASE_BRANCH="master"; shift 1;;
-      -p | --prefix ) prefix=$2; shift 2;;
-      -j | --jira ) JIRA=$2; shift 2;;
-      -h | --help ) help; exit 0;;
-      --) shift; break;;
+      -d|--develop)
+        BASE_BRANCH="develop"; shift ;;
+      -m|--master)
+        BASE_BRANCH="master"; shift ;;
+      -p|--prefix)
+        prefix="$2"; shift 2 ;;
+      -j|--jira)
+        JIRA="$2"; shift 2 ;;
+      -h|--help)
+        help; exit 0 ;;
+      --)
+        shift; break ;;
+      -*)
+        echo "Unknown option: $1"; exit 1 ;;
+      *)
+        break ;;
     esac
   done
 
