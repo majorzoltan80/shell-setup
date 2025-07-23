@@ -1,4 +1,6 @@
-source ${SCRIPT_DIR}/../scripts/common_functions/git.sh
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+
+source ${SCRIPT_DIR}/../scripts/common_functions/git_helper.sh
 
 # Function which adds an alias to the current shell and to
 # the ~/.alias file.
@@ -37,9 +39,7 @@ function _seq ()
 }
 
 function reload_terminal_setup_files() {
-    echo "Reload .alias file"
-    source ~/.alias
-    echo "Reload .zprofile"
+    echo "Reload .zprofile file"
     source ~/.zprofile
 }
 
@@ -55,7 +55,7 @@ alias ra='reload_terminal_setup_files'
 
 alias gs='git status'
 alias gp='git pull'
-alias gc='git checkout'
+alias gc='smart_checkout'
 alias gd='git diff --staged'
 alias gb='git branch'
 alias gr='git_reset_to_base'

@@ -7,7 +7,7 @@ function get_ticket_number() {
   #   - 12345 -> 12345
   #   - SEON-12345 -> 12345
   #   - https://seonteam.atlassian.net/browse/SEON-12345 -> 12345
-
+  echo "Extracting ticket number from: $1" 1>&2
   jira_string=$1
   pattern='([0-9]+)'
   [[ $jira_string =~ $pattern ]]

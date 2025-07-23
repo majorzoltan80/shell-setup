@@ -1,3 +1,8 @@
+#!/bin/bash
+
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+source ${SCRIPT_DIR}/jira.sh
+
 git_reset_to_base() {
     base=$1
     target=$2
@@ -10,7 +15,6 @@ git_reset_to_base() {
     git reset $(git merge-base ${base} ${target})
 
 }
-
 
 function standardize_branchname() {
   # Converts the string by
@@ -42,4 +46,34 @@ function standardize_branchname() {
   standardized_branchname=$(echo "${standardized_branchname%-}")
 
   echo "${standardized_branchname}"
+}
+
+function smart_checkout() {
+  branch_name=$1
+
+  git checkout "${branch_name}" 2>/dev/null
+  if [ $? -eq 0 ]; then
+    echo "Checked out branch ${branch_name}"
+    return 0
+  else
+    echo "Could not check out branch ${branch_name}."
+    echo "Trying to look for a matching branch."
+  fi
+
+  ticket_number=$(get_ticket_number "${branch_name}")
+  echo "ticket_number: ${ticket_number}"
+  if [ -z "${ticket_number}" ]; then
+    echo "Could extract ticket number from input: ${branch_name}"
+    return 1
+  fi
+
+  latest_matching_branch=$(git branch | grep "${ticket_number}" | tail -n 1)
+  if [ -z "${latest_matching_branch}" ]; then
+    echo "Could not find a matching branch for ticket number: ${ticket_number}"
+    echo "Available branches:"
+    git branch
+    return 1
+  fi
+
+  git checkout "${latest_matching_branch}"
 }

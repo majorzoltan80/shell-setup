@@ -1,11 +1,11 @@
 #!/bin/bash
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
 # importing common functions
 source ${SCRIPT_DIR}/common_functions/command_available.sh
 source ${SCRIPT_DIR}/common_functions/jira.sh
-source ${SCRIPT_DIR}/common_functions/git.sh
+source ${SCRIPT_DIR}/common_functions/git_helper.sh
 
 
 function help() {
