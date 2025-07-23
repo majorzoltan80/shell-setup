@@ -1,0 +1,119 @@
+# Function which adds an alias to the current shell and to
+# the ~/.alias file.
+function add-alias () {
+   local name=$1 value="$2"
+   echo alias $name=\'$value\' >>~/.alias
+   eval alias $name=\'$value\'
+   alias $name
+}
+
+# "repeat" command.  Like:
+#
+#  repeat 10 echo foo
+function repeat () {
+    local count="$1" i;
+    shift;
+    for i in $(_seq 1 "$count");
+    do
+        eval "$@";
+    done
+}
+
+# Subfunction needed by `repeat'.
+function _seq ()
+{
+    local lower upper output;
+    lower=$1 upper=$2;
+
+    if [ $lower -ge $upper ]; then return; fi
+    while [ $lower -lt $upper ];
+    do
+   echo -n "$lower "
+        lower=$(($lower + 1))
+    done
+    echo "$lower"
+}
+
+git_reset_to_base() {
+    base=$1
+    target=$2
+
+    : "${base:=develop}"
+    echo "base: ${base}"
+    : "${target:=$(git branch --show-current)}"
+    echo target: ${target}
+    echo "git reset $(git merge ${base} ${target})"
+    git reset $(git merge-base ${base} ${target})
+
+}
+
+function reload_terminal_setup_files() {
+    echo "Reload .alias file"
+    source ~/.alias
+    echo "Reload .zprofile"
+    source ~/.zprofile
+}
+
+
+function add_current_dir_to_path() {
+    echo "Adding current dir to path: $(pwd)"
+    export PATH=${PATH}:$(pwd)
+}
+
+# alias related commands
+
+alias aa='add-alias'
+alias ea='subl ~/.alias'
+alias ez='subl .zprofile'
+alias ra='reload_terminal_setup_files'
+
+
+# git aliases
+
+alias gs='git status'
+alias gp='git pull'
+alias gc='git checkout'
+alias gd='git diff --staged'
+alias gb='git branch'
+alias gr='git_reset_to_base'
+alias gl='git log'
+alias ga='git add .'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias gcm='git commit -m '
+alias gpu='git push -u'
+alias gpuf='git push --force'
+alias gbd='git branch -d '
+alias grmi='git rebase -i master'
+alias gcma='git checkout master'
+alias gcd='git checkout develop'
+alias gcb='new_task -p test'
+alias stv='source venv/bin/activate'
+alias pc='pre-commit'
+
+
+# change directory shortcuts
+alias cd..='cd ..'
+alias cd...='cd ../..'
+
+alias cddev='cd ~/dev'
+alias cddet='cd ~/dev/data-enrichment-tests'
+alias cdde='cd ~/dev/data-explorer'
+alias cdfc='cd ~/dev/footprint-collector'
+alias cdmock='cd ~/dev/seon-mock'
+alias cdk6='cd ~/dev/seon-performance-test-k6'
+alias cdsmpl='cd ~/dev/socialmediaprofile'
+alias cdshell='cd ~/dev/shell-setup'
+
+alias cdar='cd ~/dev/seon-admin-react/selenium-tests'
+alias cdssc='cd ~/dev/seon-selenium-common'
+
+# ls aliases
+
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# general aliases
+alias h='history'
+alias ap="add_current_dir_to_path"

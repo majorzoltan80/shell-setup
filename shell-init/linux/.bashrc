@@ -106,20 +106,12 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
+if [ -f ~/profile/.alias ]; then
+    . ~/profile/.alias
 fi
 
-if [ -f ~/dev/seon-admin-react/selenium-tests/.env ]; then
-    . ~/dev/seon-admin-react/selenium-tests/.env
-fi
-
-if [ -f ~/.bash_functions ]; then
-    . ~/.bash_functions
-fi
-
-if [ -f ~/.jira.api ]; then
-    . ~/.jira.api
+if [ -f ~/profile/.jira.env ]; then
+    . ~/profile/.jira.env
 fi
 
 

@@ -1,1 +1,1 @@
-# linux-setup
+# shell-setup
