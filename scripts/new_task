@@ -1,7 +1,5 @@
 #!/bin/bash
 
-SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-
 # importing common functions
 source ${HOME}/scripts/common_functions/command_available.sh
 source ${HOME}/scripts/common_functions/jira.sh
