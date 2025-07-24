@@ -63,11 +63,11 @@ function smart_checkout() {
   ticket_number=$(get_ticket_number "${branch_name}")
   echo "ticket_number: ${ticket_number}"
   if [ -z "${ticket_number}" ]; then
-    echo "Could extract ticket number from input: ${branch_name}"
+    echo "Could not extract ticket number from input: ${branch_name}"
     return 1
   fi
 
-  latest_matching_branch=$(git branch | grep "${ticket_number}" | tail -n 1)
+  latest_matching_branch=$(git branch | grep "${ticket_number}" | tail -n 1 | tr -d '[:space:]')
   if [ -z "${latest_matching_branch}" ]; then
     echo "Could not find a matching branch for ticket number: ${ticket_number}"
     echo "Available branches:"

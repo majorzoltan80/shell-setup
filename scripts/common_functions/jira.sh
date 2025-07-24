@@ -10,17 +10,17 @@ function get_ticket_number() {
   echo "Extracting ticket number from: $1" 1>&2
   jira_string=$1
   pattern='([0-9]+)'
-  [[ $jira_string =~ $pattern ]]
-  echo "${BASH_REMATCH[1]}"
+  ticket_number=$(echo "$jira_string" | grep -oE "${pattern}")
+  if [ -n "${ticket_number}" ]; then
+    echo "${ticket_number}"
+  fi
 }
 
 function get_work_item() {
   # Tries to extract the work item identifier from the input string
-  # Try to get the
   jira_string=$1
   pattern='([A-Z]+-[0-9]+)'
-  [[ $jira_string =~ $pattern ]]
-  work_item="${BASH_REMATCH[1]}"
+  work_item=$(echo "${jira_string}" | grep -oE "${pattern}")
   if [ -z "${work_item}" ]; then
     ticket_number=$(get_ticket_number "${jira_string}")
     work_item="DAEN-${ticket_number}"
