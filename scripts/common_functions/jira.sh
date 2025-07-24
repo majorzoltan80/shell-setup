@@ -29,10 +29,10 @@ function get_work_item() {
 }
 
 function get_jira_work_item() {
-  TICKET=$1
+  WORK_ITEM=$1
   ticket_details=$(curl -s \
   --request GET \
-  --url "https://seonteam.atlassian.net/rest/api/3/issue/${TICKET}" \
+  --url "https://seonteam.atlassian.net/rest/api/3/issue/${WORK_ITEM}" \
   --user "${JIRA_API_USER}:${JIRA_API_KEY}" \
   --header 'Accept: application/json')
 
@@ -40,16 +40,16 @@ function get_jira_work_item() {
 }
 
 function get_summary() {
-  TICKET=$1
-  ticket_details=$(get_jira_work_item "${TICKET}")
+  WORK_ITEM=$1
+  ticket_details=$(get_jira_work_item "${WORK_ITEM}")
 
   SUMMARY=$(echo "${ticket_details}" | jq -r .fields.summary)
   echo "${SUMMARY}"
 }
 
 function get_type() {
-  TICKET=$1
-  ticket_details=$(get_jira_work_item "${TICKET}")
+  WORK_ITEM=$1
+  ticket_details=$(get_jira_work_item "${WORK_ITEM}")
 
   TYPE=$(echo "${ticket_details}" | jq -r .fields.issuetype.name)
   echo "${TYPE}"
