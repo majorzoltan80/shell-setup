@@ -55,6 +55,7 @@ function parse_arguments() {
   done
 
   WORK_ITEM=$(get_work_item "${JIRA}")
+  echo "Using work item ${WORK_ITEM}"
 }
 
 
