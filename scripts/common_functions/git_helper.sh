@@ -1,7 +1,6 @@
 #!/bin/bash
 
-SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-source ${SCRIPT_DIR}/jira.sh
+source ${HOME}/scripts/common_functions/jira.sh
 
 git_reset_to_base() {
     base=$1

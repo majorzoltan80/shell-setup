@@ -1,6 +1,4 @@
-SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-
-source ${SCRIPT_DIR}/../scripts/common_functions/git_helper.sh
+source ${HOME}/scripts/common_functions/git_helper.sh
 
 # Function which adds an alias to the current shell and to
 # the ~/.alias file.
@@ -70,7 +68,7 @@ alias gbd='git branch -d '
 alias grmi='git rebase -i master'
 alias gcma='git checkout master'
 alias gcd='git checkout develop'
-alias gcb='new_task -p test'
+alias gcb='new_task -p test -j'
 alias stv='source venv/bin/activate'
 alias pc='pre-commit'
 

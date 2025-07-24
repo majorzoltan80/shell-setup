@@ -3,9 +3,9 @@
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 # importing common functions
-source ${SCRIPT_DIR}/common_functions/command_available.sh
-source ${SCRIPT_DIR}/common_functions/jira.sh
-source ${SCRIPT_DIR}/common_functions/git_helper.sh
+source ${HOME}/scripts/common_functions/command_available.sh
+source ${HOME}/scripts/common_functions/jira.sh
+source ${HOME}/scripts/common_functions/git_helper.sh
 
 
 function help() {
