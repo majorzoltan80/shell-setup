@@ -88,10 +88,9 @@ if [ -n "${prefix}" ];then
   echo "prefix parameter is set. Creating with \"${prefix}\" prefix."
   PREFIX=${prefix}
 fi
+SUMMARY=$(standardize_branchname "${SUMMARY}")
 
 BRANCH="$PREFIX/${WORK_ITEM}-${SUMMARY}"
-
-BRANCH=$(standardize_branchname "${BRANCH}")
 
 if [[ -n "${BASE_BRANCH}" ]]; then
   echo "Base branch is set, checking out \"${BASE_BRANCH}\" "

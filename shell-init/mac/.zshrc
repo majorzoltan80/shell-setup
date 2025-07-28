@@ -8,4 +8,4 @@ parse_git_branch() {
 
 
 echo Set prompt to '%n %1~ $(parse_git_branch) %#'
-export PS1="%n %1~ $(parse_git_branch) %#"
+export PS1="%n %1~ %# "

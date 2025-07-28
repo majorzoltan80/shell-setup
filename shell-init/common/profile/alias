@@ -69,8 +69,8 @@ alias grmi='git rebase -i master'
 alias gcma='git checkout master'
 alias gcd='git checkout develop'
 alias gcb='new_task -p test -j'
-alias stv='source venv/bin/activate'
-alias pc='pre-commit'
+alias stv='source .venv/bin/activate'
+alias pc='.git/hooks/pre-commit'
 
 
 # change directory shortcuts
