@@ -71,7 +71,7 @@ alias gcd='git checkout develop'
 alias gcb='new_task -p test -j'
 alias stv='source .venv/bin/activate'
 alias pc='.git/hooks/pre-commit'
-alias grb='git rebase --continue'
+alias grc='git rebase --continue'
 
 
 # change directory shortcuts
