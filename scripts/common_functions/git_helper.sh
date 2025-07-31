@@ -76,3 +76,9 @@ function smart_checkout() {
 
   git checkout "${latest_matching_branch}"
 }
+
+
+function git_push() {
+  git push --set-upstream
+  gh pr view --web
+}
