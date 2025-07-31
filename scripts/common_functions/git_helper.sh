@@ -82,3 +82,8 @@ function git_push() {
   git push --set-upstream
   gh pr view --web
 }
+
+function git_push_force() {
+  git push --force
+  gh pr view --web
+}
